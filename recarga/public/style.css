@@ -1,0 +1,144 @@
+:root {
+  --fundo: #f3f4f1;
+  --cartao: #ffffff;
+  --texto: #1d2320;
+  --suave: #6a716d;
+  --borda: #dfe2dd;
+  --primaria: #1f6f5c;
+  --primaria-texto: #ffffff;
+  --verde: #1e8a4f;   --verde-bg: #e3f4ea;
+  --amarelo: #a86a00; --amarelo-bg: #fdf1d8;
+  --vermelho: #c0392b; --vermelho-bg: #fbe5e2;
+  --cinza: #6a716d;   --cinza-bg: #eceeea;
+  --raio: 12px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #141816; --cartao: #1d2220; --texto: #e8ebe9; --suave: #9aa29e; --borda: #2e3532;
+    --primaria: #3fb391; --primaria-texto: #0e1412;
+    --verde: #5fd394; --verde-bg: #183326;
+    --amarelo: #f0b84a; --amarelo-bg: #3a2e14;
+    --vermelho: #f2836f; --vermelho-bg: #3d1f1a;
+    --cinza: #9aa29e; --cinza-bg: #262c29;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--fundo); color: var(--texto);
+  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+h1 { font-size: 1.2rem; margin: 0; }
+h2 { font-size: 1.15rem; margin: 0 0 12px; }
+[hidden] { display: none !important; }
+
+/* Botões e campos */
+.btn {
+  border: 1px solid var(--borda); background: var(--cartao); color: var(--texto);
+  padding: 9px 14px; border-radius: 9px; font: inherit; cursor: pointer; white-space: nowrap;
+}
+.btn:hover { border-color: var(--suave); }
+.btn.primario { background: var(--primaria); color: var(--primaria-texto); border-color: var(--primaria); font-weight: 600; }
+.btn.fantasma { background: transparent; }
+.btn.pequeno { padding: 6px 10px; font-size: .88rem; }
+.btn.perigo { color: var(--vermelho); }
+.btn:disabled { opacity: .6; cursor: wait; }
+
+input, select {
+  width: 100%; padding: 9px 11px; border: 1px solid var(--borda); border-radius: 9px;
+  background: var(--cartao); color: var(--texto); font: inherit;
+}
+input:focus, select:focus { outline: 2px solid var(--primaria); outline-offset: -1px; }
+label { display: grid; gap: 4px; font-size: .88rem; color: var(--suave); }
+.opc { font-weight: normal; opacity: .8; }
+.erro { color: var(--vermelho); min-height: 1.2em; margin: 8px 0 0; font-size: .9rem; }
+.sub { color: var(--suave); margin: -6px 0 12px; font-size: .9rem; }
+
+.cartao { background: var(--cartao); border: 1px solid var(--borda); border-radius: var(--raio); }
+
+/* Login */
+.login { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
+.login-box { width: 100%; max-width: 340px; padding: 24px; display: grid; gap: 14px; }
+
+/* Topo */
+.topo {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;
+  padding: 14px 16px; background: var(--cartao); border-bottom: 1px solid var(--borda);
+}
+.acoes-topo { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.conteudo { max-width: 980px; margin: 0 auto; padding: 16px; }
+
+/* Resumo */
+.resumo { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+.resumo button {
+  text-align: left; padding: 12px 14px; border-radius: var(--raio); border: 1px solid var(--borda);
+  background: var(--cartao); color: var(--texto); font: inherit; cursor: pointer;
+}
+.resumo button.ativo { outline: 2px solid var(--primaria); }
+.resumo strong { display: block; font-size: 1.6rem; line-height: 1.1; }
+.resumo span { font-size: .85rem; color: var(--suave); }
+
+/* Barra */
+.barra { display: flex; gap: 8px; margin-bottom: 14px; }
+.barra input { flex: 1; }
+.barra select { width: auto; }
+
+/* Lista */
+.lista { display: grid; gap: 10px; }
+.item {
+  display: grid; grid-template-columns: 1fr auto; gap: 10px 16px; align-items: center;
+  padding: 14px 16px; border-left: 5px solid var(--cinza);
+}
+.item.vencido { border-left-color: var(--vermelho); }
+.item.vence_logo { border-left-color: var(--amarelo); }
+.item.em_dia { border-left-color: var(--verde); }
+.item .titulo { font-weight: 600; font-size: 1.02rem; }
+.item .meta { color: var(--suave); font-size: .88rem; }
+.item .acoes { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.selo {
+  display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: .8rem; font-weight: 600; margin-left: 6px;
+  vertical-align: 1px;
+}
+.selo.vencido { background: var(--vermelho-bg); color: var(--vermelho); }
+.selo.vence_logo { background: var(--amarelo-bg); color: var(--amarelo); }
+.selo.em_dia { background: var(--verde-bg); color: var(--verde); }
+.selo.sem_recarga { background: var(--cinza-bg); color: var(--cinza); }
+.vazio { text-align: center; color: var(--suave); padding: 40px 16px; }
+
+/* Modais */
+dialog {
+  border: 1px solid var(--borda); border-radius: var(--raio); padding: 0; width: min(480px, calc(100% - 32px));
+  background: var(--cartao); color: var(--texto);
+}
+dialog::backdrop { background: rgb(0 0 0 / .45); }
+.form { padding: 20px; display: grid; gap: 12px; }
+fieldset { border: 1px solid var(--borda); border-radius: 10px; padding: 10px 12px 12px; margin: 0; }
+legend { padding: 0 4px; }
+.check { display: flex; align-items: center; gap: 6px; color: var(--texto); }
+.check input { width: auto; }
+.grade-3 { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 8px; }
+.rodape-form { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+
+.hist { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.hist th, .hist td { padding: 8px 6px; border-bottom: 1px solid var(--borda); text-align: left; }
+.hist th { color: var(--suave); font-weight: 500; }
+
+/* Toast */
+.toast {
+  position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%);
+  background: var(--texto); color: var(--fundo); padding: 10px 16px; border-radius: 10px;
+  max-width: calc(100% - 32px); box-shadow: 0 6px 20px rgb(0 0 0 / .2);
+}
+
+/* Celular */
+@media (max-width: 640px) {
+  .resumo { grid-template-columns: repeat(2, 1fr); }
+  .barra { flex-wrap: wrap; }
+  .barra input { flex-basis: 100%; }
+  .barra select, .barra .btn { flex: 1; }
+  .item { grid-template-columns: 1fr; }
+  .item .acoes { justify-content: flex-start; }
+  .grade-3 { grid-template-columns: 1fr 1fr; }
+  .grade-3 label:first-child { grid-column: 1 / -1; }
+}

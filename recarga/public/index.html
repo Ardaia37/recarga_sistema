@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Controle de Recargas</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <main id="tela-login" class="login" hidden>
+    <form id="form-login" class="cartao login-box">
+      <h1>📱 Controle de Recargas</h1>
+      <label>Senha
+        <input type="password" name="senha" autocomplete="current-password" required autofocus>
+      </label>
+      <button class="btn primario" type="submit">Entrar</button>
+      <p class="erro" id="erro-login"></p>
+    </form>
+  </main>
+
+  <!-- PAINEL -->
+  <div id="tela-app" hidden>
+    <header class="topo">
+      <h1>📱 Controle de Recargas</h1>
+      <div class="acoes-topo">
+        <button class="btn" id="btn-testar" title="Envia um e-mail de teste">Testar e-mail</button>
+        <button class="btn" id="btn-verificar" title="Envia agora os avisos pendentes">Verificar agora</button>
+        <button class="btn fantasma" id="btn-sair">Sair</button>
+      </div>
+    </header>
+
+    <main class="conteudo">
+      <section class="resumo" id="resumo"></section>
+
+      <div class="barra">
+        <input type="search" id="busca" placeholder="Buscar por número, apelido ou operadora">
+        <select id="filtro">
+          <option value="">Todos</option>
+          <option value="vencido">Vencidos</option>
+          <option value="vence_logo">Vencem em breve</option>
+          <option value="em_dia">Em dia</option>
+          <option value="sem_recarga">Sem recarga</option>
+        </select>
+        <button class="btn primario" id="btn-novo">+ Novo número</button>
+      </div>
+
+      <section id="lista" class="lista"></section>
+    </main>
+  </div>
+
+  <!-- MODAL: NÚMERO -->
+  <dialog id="dlg-numero">
+    <form id="form-numero" method="dialog" class="form">
+      <h2 id="titulo-numero">Novo número</h2>
+      <input type="hidden" name="id">
+      <label>Número com DDD
+        <input name="numero" inputmode="tel" placeholder="(65) 99999-8888" required>
+      </label>
+      <label>Operadora
+        <select name="operadora" required>
+          <option>Claro</option><option>Vivo</option><option>TIM</option>
+          <option>Oi</option><option>Algar</option><option>Outra</option>
+        </select>
+      </label>
+      <label><span>Apelido / dono <span class="opc">(opcional)</span></span>
+        <input name="apelido" placeholder="Ex: Chip da Maria">
+      </label>
+
+      <fieldset id="grupo-primeira-recarga">
+        <legend><label class="check"><input type="checkbox" name="com_recarga" checked> Já registrar a recarga</label></legend>
+        <div class="grade-3">
+          <label>Data<input type="date" name="data"></label>
+          <label>Valor (R$)<input name="valor" inputmode="decimal" placeholder="20,00"></label>
+          <label>Validade (dias)<input type="number" name="validade_dias" min="1" max="365" value="30"></label>
+        </div>
+      </fieldset>
+
+      <p class="erro"></p>
+      <div class="rodape-form">
+        <button class="btn fantasma" value="cancelar" formnovalidate>Cancelar</button>
+        <button class="btn primario" value="salvar">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- MODAL: RECARGA -->
+  <dialog id="dlg-recarga">
+    <form id="form-recarga" method="dialog" class="form">
+      <h2>Nova recarga</h2>
+      <p class="sub" id="recarga-alvo"></p>
+      <input type="hidden" name="numero_id">
+      <div class="grade-3">
+        <label>Data<input type="date" name="data" required></label>
+        <label>Valor (R$)<input name="valor" inputmode="decimal" placeholder="20,00" required></label>
+        <label>Validade (dias)<input type="number" name="validade_dias" min="1" max="365" value="30" required></label>
+      </div>
+      <p class="sub" id="previa-venc"></p>
+      <p class="erro"></p>
+      <div class="rodape-form">
+        <button class="btn fantasma" value="cancelar" formnovalidate>Cancelar</button>
+        <button class="btn primario" value="salvar">Registrar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- MODAL: HISTÓRICO -->
+  <dialog id="dlg-historico">
+    <div class="form">
+      <h2>Histórico de recargas</h2>
+      <p class="sub" id="historico-alvo"></p>
+      <div id="historico-lista"></div>
+      <div class="rodape-form">
+        <button class="btn" id="fechar-historico">Fechar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
