@@ -142,3 +142,8 @@ legend { padding: 0 4px; }
   .grade-3 { grid-template-columns: 1fr 1fr; }
   .grade-3 label:first-child { grid-column: 1 / -1; }
 }
+
+.ok { color: var(--verde); margin: 0; font-size: .9rem; }
+.ok:empty, .erro:empty { display: none; }
+.usuario { color: var(--suave); font-size: .88rem; align-self: center; margin-right: 4px; }
+@media (max-width: 640px) { .usuario { flex-basis: 100%; } }
