@@ -1,97 +1,64 @@
-# 📱 Controle de Recargas
+# 📱 Controle de Recargas (Supabase + Vercel)
 
-Sistema web para cadastrar números de celular, registrar recargas e receber **avisos por e-mail** antes e depois do vencimento.
+Cadastre números de celular, registre recargas e receba **avisos por e-mail** antes e depois do vencimento.
 
 - Painel com status: 🔴 vencido · 🟡 vence em breve · 🟢 em dia · ⚪ sem recarga
 - Histórico de recargas por número
-- Um e-mail por dia, só quando há algo a avisar (3 dias antes, no dia e quando vence)
-- Cada aviso é enviado uma vez só; ao registrar nova recarga, o prazo recomeça
-- Login por senha, funciona no celular
+- Um e-mail por dia às 08h (Cuiabá), só quando há algo a avisar: 3 dias antes, no dia e quando vence
+- Login com e-mail e senha (Supabase Auth); cada conta só vê os próprios números
 
-**Tecnologias:** Node.js 22.5+, Express, SQLite (nativo do Node), Nodemailer, node-cron.
+## Como funciona
 
----
+| Parte | Onde roda |
+|---|---|
+| Página web (`public/`) | Vercel (site estático, sem build) |
+| Banco de dados | Supabase – projeto `controle-recargas` |
+| Envio de e-mail | Supabase Edge Function `enviar-avisos` (Gmail, porta 465) |
+| Agendamento diário | Supabase `pg_cron`, 12:00 UTC = 08:00 Cuiabá |
 
-## 1. Rodar no seu computador
+O banco, a função e o agendamento **já estão criados** no Supabase (organização "Ardaia37's Org", projeto `flgncteevugmuaxsptif`). Os arquivos em `supabase/` ficam aqui só como referência.
 
-```bash
-npm install
-cp .env.example .env     # no Windows: copy .env.example .env
-# edite o .env (senha do painel e dados do e-mail)
-npm start
-```
+## 1. Cadastrar a senha do Gmail no Supabase (obrigatório)
 
-Abra http://localhost:3000
+Painel do Supabase → projeto **controle-recargas** → **Edge Functions → Secrets** → adicione:
 
-## 2. Configurar o e-mail (Gmail)
+| Nome | Valor |
+|---|---|
+| `SMTP_USER` | seu Gmail (quem envia os avisos) |
+| `SMTP_PASS` | a senha de app de 16 letras do Google |
+| `APP_URL` | (opcional) endereço do site no Vercel, aparece como link no e-mail |
 
-1. Ative a **verificação em duas etapas** na sua conta Google.
-2. Acesse https://myaccount.google.com/apppasswords e crie uma **senha de app**.
-3. No `.env`:
+Os avisos chegam no **e-mail da conta** que você criar no painel.
 
-```
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=465
-SMTP_USER=seuemail@gmail.com
-SMTP_PASS=a senha de app de 16 letras
-```
+## 2. Testar no computador
 
-4. No painel, clique em **Testar e-mail**.
+Abra `public/index.html` no navegador (dois cliques). Crie a conta, confirme pelo e-mail e entre.
 
-Outros provedores (Outlook, Hostinger, Zoho) funcionam igual: troque host, porta e usuário.
+## 3. Publicar no Vercel
 
-## 3. Configurações do `.env`
+1. Suba esta pasta para o GitHub.
+2. No Vercel: **Add New → Project** → escolha o repositório.
+3. Em **Root Directory**, aponte para a pasta deste projeto (onde está o `vercel.json`).
+4. Framework: **Other**. Não precisa de build nem de variáveis de ambiente.
+5. **Deploy**.
 
-| Variável | O que faz | Padrão |
-|---|---|---|
-| `APP_SENHA` | Senha para entrar no painel | obrigatório |
-| `SESSION_SECRET` | Texto aleatório para proteger o login | obrigatório |
-| `DIAS_AVISO` | Quantos dias antes avisar | `3` |
-| `HORARIO_CRON` | Horário da verificação diária | `0 8 * * *` (08:00) |
-| `EMAIL_DESTINO` | Para onde vão os avisos | o próprio `SMTP_USER` |
-| `APP_URL` | Link do painel dentro do e-mail | vazio |
-| `COOKIE_SEGURO` | `true` quando estiver em HTTPS | `false` |
-| `PORT` | Porta do servidor | `3000` |
+Depois, no Supabase → **Authentication → URL Configuration**, coloque o endereço do Vercel em **Site URL**.
 
-## 4. Hospedagem
+## 4. Segurança
 
-O servidor precisa **ficar ligado o tempo todo** (é ele que dispara o e-mail diário) e precisa de **disco persistente** (o banco fica em `data/recargas.db`).
+- A chave em `public/config.js` é a chave **pública** (publishable). Pode ficar no GitHub: quem protege os dados são as regras RLS do banco.
+- Depois de criar sua conta, desative novos cadastros em **Authentication → Sign In / Providers → Allow new users to sign up**.
+- A senha do Gmail fica só nos Secrets do Supabase, nunca no código.
 
-- **VPS** (Hostinger, Contabo, Oracle Cloud grátis, etc.) — melhor opção:
-  ```bash
-  npm install --omit=dev
-  npm i -g pm2
-  pm2 start npm --name recargas -- start
-  pm2 save && pm2 startup
-  ```
-  Coloque um Nginx/Caddy na frente com HTTPS e use `COOKIE_SEGURO=true`.
-- **Railway / Render / Fly.io**: funciona, mas use um plano que não "durma" e adicione um volume persistente apontando para `data/` (ou defina `DB_PATH`).
-
-**Backup:** basta copiar o arquivo `data/recargas.db`.
-
-## 5. Estrutura
+## Estrutura
 
 ```
-src/
-  server.js   rotas da API e login
-  db.js       criação das tabelas (numeros, recargas, avisos)
-  status.js   cálculo de situação de cada número
-  avisos.js   verificação diária e montagem do e-mail
-  mailer.js   envio via SMTP
-  datas.js    funções de data no fuso de Cuiabá
 public/
   index.html, style.css, app.js   página web
+  config.js                       URL e chave pública do Supabase
+  vendor/supabase.js              biblioteca do Supabase (sem depender de CDN)
+supabase/
+  functions/enviar-avisos/index.ts   envio dos e-mails
+  migrations/*.sql                   tabelas, segurança e agendamento
+vercel.json
 ```
-
-## API (resumo)
-
-| Método | Rota | Uso |
-|---|---|---|
-| POST | `/api/login` | `{ senha }` |
-| GET | `/api/numeros` | lista com status |
-| POST | `/api/numeros` | `{ numero, operadora, apelido, recarga? }` |
-| PUT/DELETE | `/api/numeros/:id` | editar / excluir |
-| GET/POST | `/api/numeros/:id/recargas` | histórico / nova recarga `{ data, valor, validade_dias }` |
-| DELETE | `/api/recargas/:id` | apagar recarga |
-| POST | `/api/avisos/testar` | e-mail de teste |
-| POST | `/api/avisos/verificar` | envia avisos pendentes agora |
