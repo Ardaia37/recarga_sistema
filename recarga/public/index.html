@@ -12,17 +12,11 @@
   <main id="tela-login" class="login" hidden>
     <form id="form-login" class="cartao login-box">
       <h1>📱 Controle de Recargas</h1>
-      <p class="sub" id="login-sub">Entre com seu e-mail e senha</p>
-      <label>E-mail
-        <input type="email" name="email" autocomplete="email" required autofocus>
-      </label>
       <label>Senha
-        <input type="password" name="senha" autocomplete="current-password" minlength="6" required>
+        <input type="password" name="senha" autocomplete="current-password" required autofocus>
       </label>
-      <button class="btn primario" type="submit" id="btn-login">Entrar</button>
-      <button class="btn fantasma" type="button" id="btn-alternar">Criar conta</button>
+      <button class="btn primario" type="submit">Entrar</button>
       <p class="erro" id="erro-login"></p>
-      <p class="ok" id="ok-login"></p>
     </form>
   </main>
 
@@ -31,7 +25,6 @@
     <header class="topo">
       <h1>📱 Controle de Recargas</h1>
       <div class="acoes-topo">
-        <span class="usuario" id="usuario-email"></span>
         <button class="btn" id="btn-testar" title="Envia um e-mail de teste">Testar e-mail</button>
         <button class="btn" id="btn-verificar" title="Envia agora os avisos pendentes">Verificar agora</button>
         <button class="btn fantasma" id="btn-sair">Sair</button>
@@ -126,8 +119,6 @@
 
   <div id="toast" class="toast" hidden></div>
 
-  <script src="vendor/supabase.js"></script>
-  <script src="config.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
